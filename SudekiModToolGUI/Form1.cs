@@ -89,7 +89,7 @@ namespace SudekiModToolGUI
 
             long max = Math.Max(sizeO, Math.Max(sizeA, sizeB));
 
-            using (var mmO = MemoryMappedFile.CreateFromFile(originalFile))
+            using (var mmO = MemoryMappedFile.CreateFromFile(originalFile)) //Begin comparison by streaming the file data
             using (var mmA = MemoryMappedFile.CreateFromFile(fileA))
             using (var mmB = MemoryMappedFile.CreateFromFile(fileB))
             using (var viewO = mmO.CreateViewAccessor())
@@ -109,9 +109,9 @@ namespace SudekiModToolGUI
                     bool aChanged = a != o;
                     bool bChanged = b != o;
 
-                    byte result;
+                    byte result; //byte data to be merged
 
-                    if (aChanged && bChanged)
+                    if (aChanged && bChanged) //Confilct logic
                     {
                         if (a == b)
                         {
@@ -129,12 +129,12 @@ namespace SudekiModToolGUI
                                 continue;
                             }
 
-                            if (mode == MergeMode.AbortOnConflict)
+                            if (mode == MergeMode.AbortOnConflict) //Not merge safe
                             {
                                 txtOutput.AppendText("\r\nMerge aborted due to conflict.");
                                 return;
                             }
-                            else if (mode == MergeMode.ModA)
+                            else if (mode == MergeMode.ModA) //Overwrite conflict
                             {
                                 result = a;
                             }
@@ -157,7 +157,7 @@ namespace SudekiModToolGUI
                         result = o;
                     }
 
-                    if (!checkOnly)
+                    if (!checkOnly) //No conflicts write data
                         outStream.WriteByte(result);
                 }
 
